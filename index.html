@@ -348,6 +348,34 @@
       const { useState, useMemo } = React;
 
       const linkedInUrl = "https://www.linkedin.com/in/cblatchford";
+      const birthDate = new Date(Date.UTC(1978, 0, 3));
+      const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+      const formatNumber = (value) => value.toLocaleString();
+
+      const getBioMetrics = () => {
+        const today = new Date();
+        const daysSinceBirth = Math.floor((today - birthDate) / MS_PER_DAY);
+
+        return [
+          {
+            value: formatNumber(daysSinceBirth),
+            label: "Days alive since Jan 3, 1978"
+          },
+          {
+            value: formatNumber(daysSinceBirth * 2500),
+            label: "Estimated calories burned (2,500/day)"
+          },
+          {
+            value: formatNumber(daysSinceBirth * 3),
+            label: "Cups of tea enjoyed (3/day)"
+          },
+          {
+            value: formatNumber(daysSinceBirth * 6000),
+            label: "Steps taken (6,000/day)"
+          }
+        ];
+      };
 
       const sections = [
         {
@@ -405,50 +433,40 @@
                   )
                 )
               )
-            )
+              )
         },
         {
-          id: "bio",
-          kicker: "Bio",
-          title: "Delivery minded, tech obsessed",
+          id: "bio-metrics",
+          navLabel: "Bio Metrics",
+          kicker: "Bio Metrics",
+          title: "A lifetime of reps and rituals",
           description:
-            "Across multiple global FTSE 100 enterprises, I’ve scaled platforms, teams, and processes without sacrificing quality. My approach blends hands-on technical leadership with transparent communication and thoughtful hiring. I’ve grown and matured engineering bench-strength, insourcing critical skills whilst retaining flexibility. I’ve implemented pragmatic multi-cloud-native architectures with measurable reliability improvements and introduced delivery practices—such as DORA and FinOps—significantly increasing quality across teams and reducing waste. I’ve also built data platforms and AI capabilities to unlock new revenue streams and improve customer experiences. As Chief Technology Officer in large retail organisations and across diverse industries, I combine strategy and execution: setting vision, aligning stakeholders, leading through change, and driving business outcomes. I believe in empowering teams, maintaining operational discipline, and fostering a culture of learning and accountability. I’m passionate about doing the right thing—balancing innovation with stability, speed with quality, and ambition with sustainability.",
+            "A playful look at the cumulative totals behind my daily habits since the day I was born.",
           content: () =>
             React.createElement(
               React.Fragment,
               null,
               React.createElement(
                 "div",
-                { className: "section-body" },
-                React.createElement(
-                  "div",
-                  { className: "skills-list" },
-                  [
-                    "Technical Strategy",
-                    "Platform Architecture",
-                    "Team Coaching & Leadership",
-                    "Product Discovery",
-                    "Data & AI Enablement",
-                    "Security & Compliance",
-                    "Engineering Transformation"
-                  ].map((skill) =>
-                    React.createElement(
-                      "span",
-                      { key: skill, className: "chip" },
-                      skill
-                    )
+                { className: "metrics-grid" },
+                getBioMetrics().map((metric) =>
+                  React.createElement(
+                    "div",
+                    { key: metric.label, className: "metric-card" },
+                    React.createElement("div", { className: "metric-value" }, metric.value),
+                    React.createElement("div", { className: "metric-label" }, metric.label)
                   )
                 )
               )
             )
         },
         {
-          id: "projects",
-          kicker: "Projects",
-          title: "Highlights from recent engagements",
-          description:
-            "I work with teams to accelerate delivery, clarify strategy, and build durable systems. Here are a few favorites.",
-          content: () =>
+            id: "projects",
+            kicker: "Projects",
+            title: "Highlights from recent engagements",
+            description:
+              "I work with teams to accelerate delivery, clarify strategy, and build durable systems. Here are a few favorites.",
+            content: () =>
             React.createElement(
               "div",
               { className: "projects-grid" },
@@ -494,65 +512,6 @@
               )
             )
         },
-        {
-          id: "contact",
-          kicker: "Contact",
-          title: "Let's build your next advantage",
-          description:
-            "Whether you need a fractional CTO, a seasoned advisor, or a steady hand to guide a transformation, I'm ready to help.",
-          content: () =>
-            React.createElement(
-              "div",
-              { className: "contact-card" },
-              React.createElement(
-                "form",
-                {
-                  onSubmit: (event) => {
-                    event.preventDefault();
-                    const formData = new FormData(event.target);
-                    const name = formData.get("name");
-                    alert(`Thanks, ${name || "there"}. Let's continue the conversation on LinkedIn.`);
-                  }
-                },
-                React.createElement(
-                  "label",
-                  { htmlFor: "name" },
-                  "Name"
-                ),
-                React.createElement("input", {
-                  id: "name",
-                  name: "name",
-                  placeholder: "Your name"
-                }),
-                React.createElement(
-                  "label",
-                  { htmlFor: "email" },
-                  "Email"
-                ),
-                React.createElement("input", {
-                  id: "email",
-                  type: "email",
-                  name: "email",
-                  placeholder: "you@company.com"
-                }),
-                React.createElement(
-                  "label",
-                  { htmlFor: "message" },
-                  "Project Overview"
-                ),
-                React.createElement("textarea", {
-                  id: "message",
-                  name: "message",
-                  placeholder: "Tell me about the outcomes you're targeting"
-                }),
-                React.createElement(
-                  "button",
-                  { type: "submit", className: "btn" },
-                  "Send"
-                )
-              )
-            )
-        }
       ];
 
       function App() {
@@ -562,7 +521,9 @@
           () =>
             sections.map((section) => ({
               id: section.id,
-              label: section.id.charAt(0).toUpperCase() + section.id.slice(1)
+              label:
+                section.navLabel ||
+                section.id.charAt(0).toUpperCase() + section.id.slice(1)
             })),
           []
         );
